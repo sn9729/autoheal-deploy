@@ -1,30 +1,37 @@
 <%- include('partials/header') %>
-<div class="glass-card" style="max-width: 600px; margin: 0 auto;">
-    <h2 style="margin-bottom: 1.5rem;">Add New Task</h2>
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+        <h2><i class="fa-solid fa-plus-circle" style="color: var(--primary);"></i> Create New Task</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Fill in the details below to add a new task to your dashboard.</p>
+    </div>
+
     <form action="/tasks/add" method="POST">
         <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" required placeholder="What needs to be done?">
+            <label for="title">Task Title <span style="color: var(--danger);">*</span></label>
+            <input type="text" id="title" name="title" required placeholder="e.g., Prepare quarterly presentation">
         </div>
         <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="3" placeholder="Additional details..."></textarea>
+            <label for="description">Description (Optional)</label>
+            <textarea id="description" name="description" rows="4" placeholder="Add any relevant details or links here..."></textarea>
         </div>
-        <div class="form-group">
-            <label for="dueDate">Due Date</label>
-            <input type="date" id="dueDate" name="dueDate">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate">
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority Level</label>
+                <select id="priority" name="priority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="priority">Priority</label>
-            <select id="priority" name="priority">
-                <option value="low">Low</option>
-                <option value="medium" selected>Medium</option>
-                <option value="high">High</option>
-            </select>
-        </div>
-        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-            <a href="/tasks/dashboard" class="btn" style="background: rgba(255,255,255,0.1); color: white; flex: 1;">Cancel</a>
-            <button type="submit" class="btn btn-primary" style="flex: 2;">Save Task</button>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <a href="/tasks/dashboard" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Task</button>
         </div>
     </form>
 </div>
