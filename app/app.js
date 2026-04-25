@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
+const User = require('./models/User');
 
 // Load environment variables
 dotenv.config();
@@ -33,8 +34,17 @@ app.use(session({
 }));
 
 // Global variable for templates
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   res.locals.userId = req.session.userId || null;
+  if (req.session.userId) {
+    try {
+      res.locals.user = await User.findById(req.session.userId);
+    } catch (err) {
+      res.locals.user = null;
+    }
+  } else {
+    res.locals.user = null;
+  }
   next();
 });
 

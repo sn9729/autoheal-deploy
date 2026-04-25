@@ -1,11 +1,11 @@
 <%- include('partials/header') %>
 <div class="card" style="max-width: 450px; margin: 2rem auto;">
     <div style="text-align: center; margin-bottom: 2rem;">
-        <div style="width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; color: var(--primary);">
+        <div style="width: 60px; height: 60px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; color: var(--primary);">
             <i class="fa-solid fa-user-lock"></i>
         </div>
         <h2>Welcome Back</h2>
-        <p style="color: var(--text-muted); margin-top: 0.5rem;">Sign in to continue to TaskMaster.</p>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Sign in to continue to TaskMaster.</p>
     </div>
 
     <% if (error) { %>
@@ -24,7 +24,7 @@
         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
     </form>
     
-    <p style="text-align: center; margin-top: 2rem; font-size: 0.95rem; color: var(--text-muted);">
+    <p style="text-align: center; margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted);">
         Don't have an account? <a href="/register" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create an account</a>
     </p>
 </div>
