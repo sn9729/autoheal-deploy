@@ -1,18 +1,64 @@
 <%- include('partials/header') %>
 <div class="dashboard-header">
     <div>
-        <h2>Your Tasks</h2>
+        <h2>Your Dashboard</h2>
         <p style="color: var(--text-muted); margin-top: 0.25rem;">Manage and organize your daily activities.</p>
     </div>
     <a href="/tasks/add" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Task</a>
 </div>
 
+<% if (typeof stats !== 'undefined') { %>
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value"><%= stats.total %></div>
+        <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--success);"><%= stats.completed %></div>
+        <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--warning);"><%= stats.pending %></div>
+        <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="<%= stats.progress === 100 ? 'color: var(--success);' : 'color: var(--primary);' %>"><%= stats.progress %>%</div>
+        <div class="stat-label">Progress</div>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <form action="/tasks/dashboard" method="GET">
+        <div class="form-group" style="flex: 2;">
+            <input type="text" name="search" placeholder="Search tasks..." value="<%= filters.search %>">
+        </div>
+        <div class="form-group">
+            <select name="priority">
+                <option value="all" <%= filters.priority === 'all' ? 'selected' : '' %>>All Priorities</option>
+                <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>>High Priority</option>
+                <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>>Medium Priority</option>
+                <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>>Low Priority</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <select name="status">
+                <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All Statuses</option>
+                <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="completed" <%= filters.status === 'completed' ? 'selected' : '' %>>Completed</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-outline" style="height: 100%;"><i class="fa-solid fa-filter"></i> Filter</button>
+        <a href="/tasks/dashboard" class="btn btn-outline" style="height: 100%;" title="Clear Filters"><i class="fa-solid fa-rotate-right"></i></a>
+    </form>
+</div>
+<% } %>
+
 <% if (tasks.length === 0) { %>
     <div class="empty-state">
         <i class="fa-solid fa-clipboard-list"></i>
         <h3>No tasks found</h3>
-        <p style="margin-bottom: 1.5rem;">You haven't created any tasks yet. Get started by creating one!</p>
-        <a href="/tasks/add" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create your first task</a>
+        <p style="margin-bottom: 1.5rem;">There are no tasks matching your current view.</p>
+        <a href="/tasks/add" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create new task</a>
     </div>
 <% } else { %>
     <div class="task-grid">
@@ -22,8 +68,20 @@
                     <div>
                         <div class="task-title"><%= task.title %></div>
                         <div class="task-meta">
+                            <% 
+                            let isOverdue = false;
+                            if (task.dueDate && !task.completed) {
+                                const today = new Date();
+                                today.setHours(0,0,0,0);
+                                const due = new Date(task.dueDate);
+                                isOverdue = due < today;
+                            }
+                            %>
                             <% if (task.dueDate) { %>
-                                <span><i class="fa-regular fa-calendar"></i> <%= new Date(task.dueDate).toLocaleDateString() %></span>
+                                <span class="<%= isOverdue ? 'overdue-text' : '' %>">
+                                    <i class="fa-regular fa-calendar"></i> <%= new Date(task.dueDate).toLocaleDateString() %>
+                                    <% if (isOverdue) { %> (Overdue) <% } %>
+                                </span>
                             <% } else { %>
                                 <span><i class="fa-regular fa-calendar-xmark"></i> No due date</span>
                             <% } %>
