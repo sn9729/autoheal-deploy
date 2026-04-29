@@ -20,3 +20,20 @@ variable "app_port" {
   type        = number
   default     = 3000
 }
+
+variable "mongo_uri" {
+  description = "MongoDB Atlas connection string"
+  type        = string
+}
+
+variable "session_secret" {
+  description = "Session secret for the app"
+  type        = string
+  default     = "autoheal_super_secret"
+}
+
+variable "node_env" {
+  description = "Node environment"
+  type        = string
+  default     = "production"
+}

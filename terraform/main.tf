@@ -110,7 +110,11 @@ resource "aws_instance" "app_server" {
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
   
-  user_data = file("userdata.sh")
+  user_data = templatefile("${path.module}/userdata.sh", {
+    mongo_uri      = var.mongo_uri
+    session_secret = var.session_secret
+    node_env       = var.node_env
+  })
 
   tags = {
     Name = "AutoHeal-EC2"

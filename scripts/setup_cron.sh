@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # ==============================================================================
-# AutoHeal Deploy - Cron Setup Script
+# AutoHeal Deploy - Health Monitor Setup Script
 # ==============================================================================
-# Adds the health monitor script to the crontab to run every minute.
+# Installs a systemd timer to run the health monitor every 20 seconds.
 # ==============================================================================
 
 # This assumes the repo is cloned to /home/ubuntu/autoheal-deploy as per userdata.sh
@@ -12,10 +12,36 @@ SCRIPT_PATH="/home/ubuntu/autoheal-deploy/scripts/health_monitor.sh"
 # Make the health monitor executable
 chmod +x $SCRIPT_PATH
 
-# Check if the cron job already exists to avoid duplicates
+# Remove any legacy cron entry for this script
 (crontab -l 2>/dev/null | grep -v -F "$SCRIPT_PATH") | crontab -
 
-# Add the new cron job
-(crontab -l 2>/dev/null; echo "* * * * * /bin/bash $SCRIPT_PATH") | crontab -
+# Create systemd service
+cat <<EOF | sudo tee /etc/systemd/system/autoheal.service >/dev/null
+[Unit]
+Description=AutoHeal health monitor
 
-echo "Cron job for auto-healing successfully setup to run every minute."
+[Service]
+Type=oneshot
+ExecStart=/bin/bash $SCRIPT_PATH
+EOF
+
+# Create systemd timer (every 20 seconds)
+cat <<EOF | sudo tee /etc/systemd/system/autoheal.timer >/dev/null
+[Unit]
+Description=Run AutoHeal health monitor every 20 seconds
+
+[Timer]
+OnBootSec=20s
+OnUnitActiveSec=20s
+AccuracySec=1s
+Unit=autoheal.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now autoheal.timer
+
+echo "Auto-healing timer configured to run every 20 seconds."

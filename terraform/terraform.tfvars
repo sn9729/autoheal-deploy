@@ -1,0 +1,5 @@
+key_name = "debug-key"
+aws_region = "eu-north-1"
+instance_type = "t3.micro"
+mongo_uri = "mongodb+srv://mailtosynrao_db_user:BFuWGnObUOtt74Sl@cluster0.0y02ksi.mongodb.net/taskmanager?appName=Cluster0"
+session_secret = "1234567"
