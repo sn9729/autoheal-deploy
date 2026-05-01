@@ -25,7 +25,18 @@ exit /b 1
 
 :TF_OK
 call terraform init
-call terraform apply -auto-approve
+set APPLY_REQUIRED=1
+if exist terraform.tfstate (
+    call terraform state show -no-color aws_instance.app_server >nul 2>&1
+    if not errorlevel 1 set APPLY_REQUIRED=0
+)
+
+if "%APPLY_REQUIRED%"=="1" (
+    call terraform apply -auto-approve
+) else (
+    echo [!] Existing EC2 instance found in Terraform state. Skipping apply to avoid replacement.
+    call terraform apply -refresh-only -auto-approve
+)
 
 echo.
 echo [2/4] Fetching Server IP Address...

@@ -18,6 +18,15 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+locals {
+  user_data_rendered = templatefile("${path.module}/userdata.sh", {
+    mongo_uri      = var.mongo_uri
+    session_secret = var.session_secret
+    node_env       = var.node_env
+  })
+  user_data_normalized = replace(local.user_data_rendered, "\r\n", "\n")
+}
+
 # Security Group for EC2 Instance
 resource "aws_security_group" "app_sg" {
   name        = "autoheal_app_sg"
@@ -109,14 +118,15 @@ resource "aws_instance" "app_server" {
   key_name             = var.key_name
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
-  
-  user_data = templatefile("${path.module}/userdata.sh", {
-    mongo_uri      = var.mongo_uri
-    session_secret = var.session_secret
-    node_env       = var.node_env
-  })
+
+  user_data = local.user_data_normalized
 
   tags = {
     Name = "AutoHeal-EC2"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [ami, user_data]
   }
 }
